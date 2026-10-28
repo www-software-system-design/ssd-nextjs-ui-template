@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "language": "Language"
+  },
+  "starter": {
+    "title": "Your application starts here",
+    "description": "A shared foundation for your next product.",
+    "cardTitle": "Ready to build",
+    "cardDescription": "Replace this starter with your application's first feature."
+  },
+  "common": {
+    "skip": "Skip to content",
+    "loading": "Loading…",
+    "footer": "software-system.design",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "Please try again.",
+    "retry": "Try again",
+    "notFound": "Page not found",
+    "returnHome": "Return home"
+  }
+}

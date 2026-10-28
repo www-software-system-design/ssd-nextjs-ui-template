@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "language": "भाषा"
+  },
+  "starter": {
+    "title": "आपका ऐप यहाँ से शुरू होता है",
+    "description": "आपके अगले उत्पाद के लिए एक साझा आधार।",
+    "cardTitle": "बनाने के लिए तैयार",
+    "cardDescription": "इस शुरुआती पृष्ठ की जगह अपने ऐप की पहली सुविधा जोड़ें।"
+  },
+  "common": {
+    "skip": "मुख्य सामग्री पर जाएँ",
+    "loading": "लोड हो रहा है…",
+    "footer": "software-system.design",
+    "errorTitle": "कुछ गलत हो गया",
+    "errorDescription": "कृपया फिर से कोशिश करें।",
+    "retry": "फिर से कोशिश करें",
+    "notFound": "पृष्ठ नहीं मिला",
+    "returnHome": "मुख्य पृष्ठ पर जाएँ"
+  }
+}
