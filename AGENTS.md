@@ -21,6 +21,15 @@ business behavior and Next.js adapters belong here. Do not recreate `components/
   Use `npm run generate:feature -- <name>` so new features inherit local guidance.
 - Preserve unrelated changes. Use strict TypeScript; keep routes thin and features
   self-contained. Generic reusable components are consumed through public library exports.
+- For every new feature, verify current releases and support status in official
+  documentation for Next.js and the associated tools, frameworks, and packages.
+  Use current stable APIs and features; avoid deprecated APIs and experimental features.
+  Prefer the latest supported LTS release where an LTS channel exists; otherwise use
+  the latest stable release. Do not adopt alpha, beta, RC, canary, or other prereleases.
+  Check compatibility with the repository's runtime and dependency versions before
+  upgrading. Read the installed Next.js guides and relevant official migration guides;
+  update affected version constraints and the lockfile together, then run check and build.
+  Report compatibility blockers instead of silently using outdated or prerelease APIs.
 - Commit subjects must use `<feat/fix>(SSD-000): <add/update/resolve/remove/cleanup> message`.
   Choose `feat` or `fix`, a three-digit SSD ticket, one listed action, and a description.
   Example: `feat(SSD-000): add template tooling`. Husky validates every local commit;
