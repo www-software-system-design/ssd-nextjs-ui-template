@@ -1,26 +1,45 @@
 {
-  "name": "next-template",
+  "name": "nextjs-ui-template",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "prepare": "husky",
+    "check:commit": "node scripts/check-commit-message.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:architecture": "node scripts/check-architecture.ts",
+    "generate:feature": "node scripts/generate-feature.ts",
+    "test": "node --test scripts/*.test.ts",
+    "check": "npm run format:check && npm run lint && npm run check:architecture && npm run typecheck && npm test"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25"
   },
   "dependencies": {
-    "next": "16.4.2",
+    "@software-system.design/ui": "0.3.0",
+    "next": "16.4.3",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
+    "@types/node": "24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.2",
+    "eslint-config-next": "16.4.3",
+    "husky": "9.1.7",
+    "prettier": "3.9.9",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "8.71.1"
   }
 }

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "@software-system.design/ui/styles.css";
+
+@theme inline {
+  --color-background: var(--ssd-color-surface);
+  --color-foreground: var(--ssd-color-text);
+  --font-sans: var(--ssd-font-family);
+}
+
+body {
+  margin: 0;
+  background: var(--ssd-color-surface);
+  color: var(--ssd-color-text);
+  font-family: var(--ssd-font-family);
+}
+
+a:focus-visible {
+  outline: 3px solid var(--ssd-color-focus);
+  outline-offset: 3px;
+}
