@@ -5,7 +5,7 @@ React, strict TypeScript, Tailwind, and published `@software-system.design/ui` b
 
 ## Start
 
-Use Node.js 24 and npm (`npm.cmd` on PowerShell if script execution is disabled).
+Use Node.js 26 LTS (`nvm use`) and npm (`npm.cmd` on PowerShell if script execution is disabled).
 
 ```sh
 npm ci
@@ -25,6 +25,7 @@ required. Copy `.env.example` to `.env.local` when adding application configurat
 3. Run `npm run generate:feature -- billing` (use your capability name). It creates
    feature and component guidance without overwriting existing files. Update the
    feature guide with its domain, entry routes, contracts, and test command.
+   Add `--server-actions` to scaffold the feature's `actions.ts` module.
 4. Replace the `starter` feature and compose the new feature from a thin route.
    Update catalogs, locales/directions, metadata, favicon, and application copy.
 5. Select authentication, APIs, persistence, feature tests, and host/deployment
@@ -82,22 +83,42 @@ runtime-computed import.
 
 ## Commands
 
-| Command                              | Purpose                                              |
-| ------------------------------------ | ---------------------------------------------------- |
-| `npm run dev`                        | Development server                                   |
-| `npm run generate:feature -- <name>` | Feature and component guidance                       |
-| `npm run format`                     | Format source and documentation                      |
-| `npm run lint`                       | Type-aware Next.js/React lint                        |
-| `npm run check:architecture`         | Guidance, UI dependency, and import boundaries       |
-| `npm run typecheck`                  | Route generation and strict TypeScript               |
-| `npm test`                           | Native Node tooling regression tests                 |
-| `npm run check`                      | Formatting, lint, architecture, types, tooling tests |
-| `npm run build`                      | Production compilation and route generation          |
-| `npm start`                          | Serve production build                               |
+| Command                              | Purpose                                        |
+| ------------------------------------ | ---------------------------------------------- |
+| `npm run dev`                        | Development server                             |
+| `npm run generate:feature -- <name>` | Feature and component guidance                 |
+| `npm run format`                     | Format source and documentation                |
+| `npm run lint`                       | Type-aware Next.js/React lint                  |
+| `npm run check:architecture`         | Guidance, UI dependency, and import boundaries |
+| `npm run typecheck`                  | Route generation and strict TypeScript         |
+| `npm test`                           | Native Node tooling and server feature tests   |
+| `npm run check`                      | Formatting, lint, architecture, types, tests   |
+| `npm run build`                      | Production compilation and route generation    |
+| `npm start`                          | Serve production build                         |
 
-CI runs check and build. Application behavior tests are added alongside real features;
+CI runs check and build, including server feature tests. Application behavior tests are added alongside real features;
 the template does not ship unused Storybook, browser-test, or state-library packages.
 Shared component stories/tests belong to the UI library.
+
+## API endpoints and Server Actions
+
+Two runnable examples share the same validated, server-only message-preview service:
+
+- [`POST /api/message-preview`](src/app/api/message-preview/route.ts): send JSON from an HTTP client.
+- `/en/examples/message-preview` (or `/hi/examples/message-preview`): submit a form
+  through a Server Action with pending, validation, and success states.
+
+The examples preview text without saving it. They need no credentials or database.
+See the [API endpoint documentation](docs/server-implementation.md#http-endpoint-sample)
+and [Server Action documentation](docs/server-implementation.md#server-action-sample) for curl examples,
+file ownership, tests, and the steps for adding authentication, persistence, and
+cache invalidation. Remove the sample feature and its two routes during adoption.
+
+The example page renders a form; the Server Action is the async
+[`previewMessageAction`](src/features/message-preview/actions/message-preview.action.ts) function in
+`src/features/message-preview/actions/message-preview.action.ts`.
+Generate new features with `npm run generate:feature -- <name> --server-actions`
+to inherit the same naming and module boundaries.
 
 ## Progressive web app
 

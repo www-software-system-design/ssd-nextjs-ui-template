@@ -8,6 +8,20 @@
     "cardTitle": "Ready to build",
     "cardDescription": "Replace this starter with your application's first feature."
   },
+  "messagePreview": {
+    "title": "Preview a message",
+    "description": "Write a message to see its preview and character count. Your message is not saved.",
+    "label": "Message",
+    "hint": "Enter a short message, up to 500 characters.",
+    "submit": "Preview message",
+    "pending": "Preparing preview…",
+    "resultTitle": "Message preview",
+    "characters": "Character count",
+    "errors": {
+      "required": "Enter a message containing more than whitespace.",
+      "tooLong": "Enter a message of 500 characters or fewer."
+    }
+  },
   "common": {
     "skip": "Skip to content",
     "loading": "Loading…",

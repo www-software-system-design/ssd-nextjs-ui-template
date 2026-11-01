@@ -1,9 +1,16 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const [name, ...extra] = process.argv.slice(2);
-if (!name || extra.length || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name)) {
-  console.error("Usage: npm run generate:feature -- <kebab-case-name>");
+const [name, ...options] = process.argv.slice(2);
+if (
+  !name ||
+  !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name) ||
+  options.length > 1 ||
+  (options.length === 1 && options[0] !== "--server-actions")
+) {
+  console.error(
+    "Usage: npm run generate:feature -- <kebab-case-name> [--server-actions]",
+  );
   process.exit(1);
 }
 
@@ -20,7 +27,9 @@ try {
   process.exit(1);
 }
 mkdirSync(join(target, "components"));
-for (const relative of ["AGENTS.md", "components/AGENTS.md"]) {
+const files = ["AGENTS.md", "components/AGENTS.md"];
+if (options.includes("--server-actions")) files.push("actions.ts");
+for (const relative of files) {
   const template = readFileSync(
     join(import.meta.dirname, "templates", "feature", relative),
     "utf8",

@@ -4,6 +4,7 @@ import { execFileSync, spawnSync } from "node:child_process";
 import {
   mkdtempSync,
   mkdirSync,
+  existsSync,
   readFileSync,
   rmSync,
   writeFileSync,
@@ -18,6 +19,10 @@ await test("feature scaffold includes guidance and refuses overwrites and traver
   try {
     execFileSync(process.execPath, [generator, "billing"], { cwd: root });
     const guidePath = join(root, "src/features/billing/AGENTS.md");
+    assert.equal(
+      existsSync(join(root, "src/features/billing/actions.ts")),
+      false,
+    );
     assert.match(readFileSync(guidePath, "utf8"), /billing product capability/);
     assert.match(
       readFileSync(
@@ -40,6 +45,52 @@ await test("feature scaffold includes guidance and refuses overwrites and traver
       assert.equal(result.status, 1, `Must reject ${name}`);
     }
     assert.equal(readFileSync(guidePath, "utf8"), "consumer-owned");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+await test("Server Action scaffold is opt-in and rejects invalid options without writing", () => {
+  const root = mkdtempSync(join(tmpdir(), "mfe-actions-scaffold-"));
+  const generator = join(import.meta.dirname, "generate-feature.ts");
+  try {
+    for (const options of [
+      ["--unknown"],
+      ["--server-actions", "--server-actions"],
+      ["--server-actions", "../outside"],
+    ]) {
+      const result = spawnSync(
+        process.execPath,
+        [generator, "invoices", ...options],
+        {
+          cwd: root,
+        },
+      );
+      assert.equal(result.status, 1);
+      assert.equal(existsSync(join(root, "src/features/invoices")), false);
+    }
+
+    execFileSync(
+      process.execPath,
+      [generator, "invoices", "--server-actions"],
+      {
+        cwd: root,
+      },
+    );
+    const actionPath = join(root, "src/features/invoices/actions.ts");
+    assert.match(readFileSync(actionPath, "utf8"), /^"use server";/);
+    assert.match(
+      readFileSync(join(root, "src/features/invoices/AGENTS.md"), "utf8"),
+      /<verb><Entity>Action/,
+    );
+    writeFileSync(actionPath, "consumer-owned");
+    const repeated = spawnSync(
+      process.execPath,
+      [generator, "invoices", "--server-actions"],
+      { cwd: root },
+    );
+    assert.equal(repeated.status, 1);
+    assert.equal(readFileSync(actionPath, "utf8"), "consumer-owned");
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

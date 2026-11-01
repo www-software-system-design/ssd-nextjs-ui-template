@@ -17,6 +17,8 @@ business behavior and Next.js adapters belong here. Do not recreate `components/
   references from [architecture](docs/architecture.md) and the [ADR index](docs/adr/README.md).
 - UI/dependencies: ADR 0001. Routes/features/server boundaries: ADR 0002.
   Scaffolding/guidance: ADR 0003. Baseline/tooling: ADR 0004.
+  API endpoints, Server Actions, and the Node LTS baseline: ADR 0005.
+  Server Action naming and opt-in scaffolding: ADR 0006.
 - Guidance lives in `src/`, its scaffolded layers, `scripts/`, and `docs/adr/`.
   Use `npm run generate:feature -- <name>` so new features inherit local guidance.
 - Preserve unrelated changes. Use strict TypeScript; keep routes thin and features

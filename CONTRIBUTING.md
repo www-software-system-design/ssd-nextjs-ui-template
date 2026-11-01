@@ -1,11 +1,12 @@
 # Contributing
 
-1. Use Node.js 24 and `npm ci`.
+1. Use Node.js 26 LTS (`nvm use`) and `npm ci`.
 2. Read root and applicable scoped `AGENTS.md` files; consult only relevant
    [ADRs](docs/adr/README.md) and [architecture](docs/architecture.md).
 3. Check shared library exports before adding UI. Generic reusable components belong
    in `@software-system.design/ui`; feature business components belong in the MFE.
-4. Scaffold with `npm run generate:feature -- <name>`. Update its local guide as
+4. Scaffold with `npm run generate:feature -- <name>`; add `--server-actions` for
+   a feature-level `actions.ts` scaffold (ADR 0006). Update its local guide as
    contracts and tests are introduced. Keep routes thin and server/client boundaries explicit.
 5. Add tests for business logic and critical interactions, with their command in CI.
    Run `npm test` for generator/architecture changes.

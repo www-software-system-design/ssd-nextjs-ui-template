@@ -16,11 +16,13 @@
     "format:check": "prettier --check .",
     "check:architecture": "node scripts/check-architecture.ts",
     "generate:feature": "node scripts/generate-feature.ts",
-    "test": "node --test scripts/*.test.ts",
+    "test:tooling": "node --test scripts/*.test.ts",
+    "test:features": "node --conditions=react-server --test src/features/*/*.test.ts",
+    "test": "npm run test:tooling && npm run test:features",
     "check": "npm run format:check && npm run lint && npm run check:architecture && npm run typecheck && npm test"
   },
   "engines": {
-    "node": ">=24.0.0 <25"
+    "node": ">=26.13.0 <27"
   },
   "dependencies": {
     "@software-system.design/ui": "0.3.0",
@@ -31,7 +33,7 @@
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
-    "@types/node": "24.19.1",
+    "@types/node": "26.6.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

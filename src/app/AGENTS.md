@@ -10,3 +10,7 @@ Keep app-wide metadata such as `manifest.ts` at the app root, outside locale rou
 Maintain its install icons in `public/`; add service workers or offline behavior only
 for an explicit product requirement.
 Do not disable typed routes or move secrets into client imports.
+For HTTP endpoints read `api/AGENTS.md`; for Server Actions read ADR 0005 and
+`docs/server-implementation.md`. Keep both adapters thin and call feature services directly.
+Pages render the UI that invokes Server Actions; `page.tsx` is not an action module.
+Keep reusable feature actions in `features/<name>/actions.ts` per ADR 0006.

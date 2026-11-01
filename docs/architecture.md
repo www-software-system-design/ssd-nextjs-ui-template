@@ -29,8 +29,10 @@ A provisional local UI gap requires an ADR naming the owner and extraction plan.
 ## Scaffold
 
 - `src/app/`: thin pages/layouts, metadata, route boundaries, global style entry.
+- `src/app/api/**/route.ts`: HTTP adapters outside locale routing.
 - `src/features/<name>/`: one product capability. Create `components/`, `model/`,
-  `services/`, `schemas/`, `actions/`, or `hooks/` only as needed.
+  `services/`, `schemas/`, or `hooks/` only as needed. Put Server Actions in a
+  feature-level `actions.ts` module (ADR 0006).
 - `src/components/`: application shell and framework adapters, never a second UI kit.
 - `src/lib/`: shared infrastructure with real consumers, never a business dumping ground.
 - `src/config/`: typed, public configuration. Secrets belong in server-only modules.
@@ -42,6 +44,11 @@ exports except Next.js file conventions. Use `unknown` and runtime validation at
 untrusted boundaries; retain strict TypeScript. Avoid mixed server/client barrels.
 
 ## Rendering and styling
+
+See [server implementation](server-implementation.md) and [ADR 0005](adr/0005-api-end-points.md)
+for the Route Handler and Server Action contracts. Both call feature server-only
+services directly and share validation. The message-preview example is public and
+stateless; authentication and persistence remain product choices.
 
 Pages/layouts stay Server Components. Add `"use client"` at the smallest interactive
 boundary. Library controls are Client Components and can receive serializable props
@@ -64,10 +71,14 @@ exceptions or secrets.
 
 Read root guidance, then only the scoped guidance and ADRs relevant to the touched
 files. `npm run generate:feature -- billing` scaffolds a feature and its guidance.
+Add `--server-actions` to include an `actions.ts` scaffold. Export named async
+`<verb><Entity>Action` functions; state/contracts stay in model, forms in components,
+and pages render the forms. See [ADR 0006](adr/0006-server-action-conventions.md).
 New architectural layers need a small scoped `AGENTS.md`; do not repeat the root.
 Accepted ADRs are historical records: supersede them with a new ADR.
 
-`npm run check` covers formatting, lint, architecture, types, and tooling tests;
+`npm run check` covers formatting, lint, architecture, types, tooling and server feature tests;
 `npm run build` validates production routes and package consumption. Add feature
 behavior tests and their CI command when business logic is introduced. Native Node
-tests currently validate scaffolding; no application test runner is preselected.
+tests validate scaffolding, server services, and actions; browser tests can be added
+when a product requires them.
