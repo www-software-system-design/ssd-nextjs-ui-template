@@ -12,6 +12,9 @@ For HTTP/Server Action entry points, follow ADR 0005 and `docs/server-implementa
 Keep transport parsing in routes/actions, shared validation in schemas, and business
 operations in server-only services. Copy the message-preview feature's boundaries
 when needed, rather than importing that example into another feature.
+For typed RPC, follow ADR 0010: feature-owned server-only procedures and separate typed
+HTTP clients; app routes compose routers. Keep direct server calls off HTTP. RPC is
+independent of client state and does not require TanStack Query.
 Follow ADR 0006 for action naming/scaffolding: module-level `"use server"`, named
 async `<verb><Entity>Action` exports, no JSX or exported state/constants in that module.
 `npm run generate:feature -- <name> --server-actions` includes its module scaffold.

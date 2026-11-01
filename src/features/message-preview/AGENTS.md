@@ -2,7 +2,8 @@
 
 Replaceable, public, stateless sample for both entry points in ADR 0005.
 `POST /api/message-preview` and `/{locale}/examples/message-preview`
-call the same server-only service. Preview input without storing or logging it.
+call the same server-only service through the feature-owned oRPC procedure (ADR 0010).
+POST `/api/rpc/messagePreview/create` exposes the typed HTTP transport. Preview input without storing or logging it.
 Keep normalization/validation shared; neither adapter calls the other over HTTP.
 Model types and limits may enter client bundles; services must not.
 Use explicit `.ts` imports in server modules so native Node tests can load them.

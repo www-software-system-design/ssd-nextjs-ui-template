@@ -4,9 +4,8 @@ import {
   messageMaxLength,
   type MessagePreviewActionState,
 } from "../model/preview.ts";
-import { createMessagePreview } from "../services/create-message-preview.ts";
+import { previewMessage } from "../rpc/preview-message.ts";
 
-// eslint-disable-next-line @typescript-eslint/require-await -- Next.js requires async actions; this stateless example has no I/O.
 export async function previewMessageAction(
   _previousState: MessagePreviewActionState,
   formData: FormData,
@@ -14,7 +13,7 @@ export async function previewMessageAction(
   // Every argument is untrusted, including previous state and hidden fields.
   // Authenticate here before calling a protected service in a real workflow.
   const message = formData.get("message");
-  const result = createMessagePreview({ message });
+  const result = await previewMessage({ message });
 
   return {
     ...result,

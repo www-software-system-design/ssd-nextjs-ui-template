@@ -26,7 +26,10 @@
     "node": ">=26.13.0 <27"
   },
   "dependencies": {
+    "@orpc/client": "1.16.1",
+    "@orpc/server": "1.16.1",
     "@software-system.design/ui": "0.3.0",
+    "@standard-schema/spec": "1.1.0",
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",

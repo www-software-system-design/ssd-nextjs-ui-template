@@ -156,8 +156,8 @@ preferences; server writes and Next.js cache invalidation do not synchronize a
 Zustand store automatically.
 
 The existing message-preview form keeps its pending/result state in `useActionState`.
-Its endpoint and action still call the server-only service directly; neither reads
-the UI store. See [server implementation](server-implementation.md).
+Its endpoint and action call the feature-owned oRPC procedure directly, which delegates
+to the server-only service (ADR 0010); neither reads the UI store. See [server implementation](server-implementation.md).
 
 ## Adding state
 

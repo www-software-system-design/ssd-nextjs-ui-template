@@ -4,7 +4,7 @@ Use a Route Handler when another HTTP client needs a stable URL and HTTP contrac
 mobile clients, integrations, webhooks, or browser fetch calls. Use a Server Action
 for a form or mutation owned by this Next.js UI. Actions use Next.js's POST protocol
 and are not a public REST API. For reads in Server Components, call the service
-directly instead of using an action or fetching the app's own endpoint.
+or procedure directly instead of using an action or fetching the app's own endpoint.
 
 These examples follow the installed Next.js 16.4.3 guides and the official
 [Route Handler](https://nextjs.org/docs/app/api-reference/file-conventions/route),
@@ -15,20 +15,27 @@ These examples follow the installed Next.js 16.4.3 guides and the official
 ## Layout
 
 ```text
-src/app/api/message-preview/route.ts                JSON → HTTP response
+src/app/api/message-preview/route.ts                Compatibility JSON → HTTP response
+src/app/api/rpc/router.ts                           Feature router composition
+src/app/api/rpc/[[...rest]]/route.ts                 oRPC Fetch adapter
 src/app/[locale]/examples/message-preview/page.tsx  Thin localized UI page
 src/features/message-preview/
-  actions/message-preview.action.ts                              previewMessageAction: FormData → state
+  actions/message-preview.action.ts                previewMessageAction: FormData → state
   components/message-preview-form.tsx              useActionState + shared UI
   model/preview.ts                                 Serializable contracts and limits
   schemas/message.ts                               Unknown input → validated text
+  rpc/router.ts                                    Validated procedure
+  rpc/preview-message.ts                           Direct call + REST/form field errors
+  rpc/client.ts                                    Typed HTTP client
   services/create-message-preview.ts               Server-only operation
   preview.test.ts                                  Service and action behavior
+  rpc.test.ts                                      Client/handler and direct-call behavior
 ```
 
-Both entry points call `createMessagePreview` directly. The service shares runtime
-validation and normalization across JSON and form submissions. This public sample
-trims a message and returns its Unicode code-point count. It saves nothing, logs
+Both existing entry points call `previewMessage`, which returns expected field errors
+as data and invokes the oRPC procedure directly for valid input. The procedure and
+service share the existing validator; RPC also validates independently at its boundary.
+This public sample trims a message and returns its Unicode code-point count. It saves nothing, logs
 no user text, and has no credentials or mock storage. The 500-unit input limit uses
 JavaScript string length (UTF-16 units), matching HTML `maxLength`; the resulting
 count uses code points, not grapheme clusters.
@@ -79,6 +86,65 @@ curl -i http://localhost:3000/api/message-preview \
 curl -i http://localhost:3000/api/message-preview
 ```
 
+## Typed RPC calls
+
+The integration follows [oRPC v1's Next.js adapter](https://v1.orpc.dev/docs/adapters/next)
+and [direct server calls](https://v1.orpc.dev/docs/client/server-side), pinned to stable
+1.16.1. See [ADR 0010](adr/0010-orpc-server-boundary.md) for compatibility and boundaries.
+
+Use the typed HTTP client from a browser event handler when a workflow needs RPC:
+
+```ts
+import { createMessagePreviewClient } from "@/features/message-preview/rpc/client";
+
+// Inside a browser event handler, after window is available:
+const client = createMessagePreviewClient(window.location.origin);
+const result = await client.create({ message: "Hello from RPC" });
+// result is inferred as PreviewResult; handle success/invalid states as appropriate.
+```
+
+Routes may compose feature clients; unrelated features must not import this example.
+The client imports router types only, so server services do not enter browser bundles.
+Its explicit origin avoids reading browser globals during server rendering. It needs
+no provider or TanStack Query. Add a query cache only for a real client caching need.
+
+The client sends POST `/api/rpc/messagePreview/create` using oRPC's protocol. This is
+separate from the stable REST JSON format at `/api/message-preview`. For a raw smoke
+check (application callers should use the typed client):
+
+```sh
+curl -i http://localhost:3000/api/rpc/messagePreview/create \
+  -H 'Content-Type: application/json' \
+  --data '{"json":{"message":"Hello from RPC"}}'
+```
+
+Expect 200 with `json.status: "success"` and normalized `json.data`. Invalid input
+produces oRPC's 400 `BAD_REQUEST` envelope with field issues; unknown procedures
+return 404. Only POST is exposed, and responses use `Cache-Control: no-store`.
+No locale prefix, CORS override, authentication, or storage is added to this public sample.
+
+Server code uses the direct adapter instead of an HTTP round trip:
+
+```ts
+import { previewMessage } from "@/features/message-preview/rpc/preview-message";
+
+const result = await previewMessage({ message: "Hello from the server" });
+```
+
+This adapter accepts unknown transport input, returns the existing `required` or
+`tooLong` field-error data, and calls `messagePreviewRouter.create` with oRPC's `call`
+for valid input. The typed procedure uses a Standard Schema adapter backed by
+`validateMessage`; rules remain in one place. Services retain their domain validation.
+Unexpected errors propagate. The existing Server Action form continues to use
+`useActionState`, pending feedback, and Next.js's native action protocol.
+
+For another feature, create its own server-only `rpc/router.ts`, schema, service,
+and separate typed client only if consumed. Register that router in
+`src/app/api/rpc/router.ts`; do not import the application router into a feature or
+shared infrastructure. For protected procedures, verify identity in each transport,
+pass request-scoped context to direct and HTTP callers, and authorize resources in
+the service. Never share a session or request context across users in module state.
+
 ## Server Action sample
 
 Visit `/en/examples/message-preview` or `/hi/examples/message-preview`. Enter text and
@@ -91,7 +157,7 @@ the button while pending; unexpected exceptions use the existing locale error bo
 has module-level `"use server"` and exports only an
 async function. Model types/constants live outside that module. With `useActionState`,
 the signature is `(previousState, formData)`, and `<form action={formAction}>`
-dispatches the action. The action extracts explicit fields, calls the service, and
+dispatches the action. The action extracts explicit fields, calls the direct oRPC adapter, and
 returns serializable state. It ignores previous state when validating the operation;
 clients can tamper with it. The client imports the action reference, never its service.
 
@@ -207,13 +273,15 @@ to that command; do not set it globally for browser/build commands. Explicit `.t
 imports in the tested server modules work with the existing TypeScript configuration.
 `npm test` runs tooling and feature tests, and `npm run check` includes both.
 The feature tests exercise invalid types (including files), bounds, whitespace,
-Unicode counting, FormData mapping, and serializable action state.
+Unicode counting, FormData mapping, and serializable action state. RPC tests also
+exercise typed client/handler round trips, invalid untyped inputs, and unknown paths.
 
 Run `npm run format`, `npm run check`, and `npm run build`, then the HTTP and form
 smoke checks above against the running app. Native action tests do not exercise the
 browser's Next.js action protocol or pending/accessibility behavior.
 
-For adoption, delete the example feature and its API/page routes and remove its
+For adoption, delete the example feature and its API/page routes, remove its
+registration from `app/api/rpc/router.ts`, and remove its
 catalog entries and README links. If no feature tests remain, remove or adjust
 `test:features` and its `npm test` invocation. Keep the architecture and generated
 feature guidance so future capabilities follow the same contracts.

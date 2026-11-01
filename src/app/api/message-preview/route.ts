@@ -1,4 +1,4 @@
-import { createMessagePreview } from "@/features/message-preview/services/create-message-preview";
+import { previewMessage } from "@/features/message-preview/rpc/preview-message";
 
 const responseHeaders = { "Cache-Control": "no-store" };
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   // This example is public. Authenticate before invoking protected services.
-  const result = createMessagePreview(input);
+  const result = await previewMessage(input);
   return Response.json(result, {
     status: result.status === "success" ? 200 : 422,
     headers: responseHeaders,

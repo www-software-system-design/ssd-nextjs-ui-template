@@ -14,7 +14,8 @@ and an explicit root manifest link in locale metadata. Add separately validated
 maskable icons without removing regular install icons. Browser install UI is conditional.
 Do not disable typed routes or move secrets into client imports.
 For HTTP endpoints read `api/AGENTS.md`; for Server Actions read ADR 0005 and
-`docs/server-implementation.md`. Keep both adapters thin and call feature services directly.
+`docs/server-implementation.md`. Keep adapters thin; message preview calls its feature-owned oRPC procedure directly
+through the compatibility adapter (ADR 0010), without fetching its own HTTP endpoint.
 Pages render the UI that invokes Server Actions; `page.tsx` is not an action module.
 Keep reusable feature actions in `features/<name>/actions.ts` per ADR 0006.
 The locale layout mounts `UiStoreProvider` with deterministic public initial data.

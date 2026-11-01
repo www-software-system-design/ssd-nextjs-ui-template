@@ -107,17 +107,22 @@ Shared component stories/tests belong to the UI library.
 
 ## API endpoints and Server Actions
 
-Two runnable examples share the same validated, server-only message-preview service:
+The existing examples now share one validated oRPC procedure and server-only service:
 
 - [`POST /api/message-preview`](src/app/api/message-preview/route.ts): send JSON from an HTTP client.
 - `/en/examples/message-preview` (or `/hi/examples/message-preview`): submit a form
   through a Server Action with pending, validation, and success states.
 
+A typed client also calls POST `/api/rpc/messagePreview/create`. See
+[typed RPC calls](docs/server-implementation.md#typed-rpc-calls) for browser/server examples
+and [ADR 0010](docs/adr/0010-orpc-server-boundary.md) for the integration contract.
+oRPC is pinned to stable 1.16.1; TanStack Query is not required or installed.
+
 The examples preview text without saving it. They need no credentials or database.
 See the [API endpoint documentation](docs/server-implementation.md#http-endpoint-sample)
 and [Server Action documentation](docs/server-implementation.md#server-action-sample) for curl examples,
 file ownership, tests, and the steps for adding authentication, persistence, and
-cache invalidation. Remove the sample feature and its two routes during adoption.
+cache invalidation. Remove the sample feature, API/page routes, and RPC router registration during adoption.
 
 The example page renders a form; the Server Action is the async
 [`previewMessageAction`](src/features/message-preview/actions/message-preview.action.ts) function in

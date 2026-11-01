@@ -49,7 +49,9 @@ untrusted boundaries; retain strict TypeScript. Avoid mixed server/client barrel
 
 See [server implementation](server-implementation.md) and [ADR 0005](adr/0005-api-end-points.md)
 for the Route Handler and Server Action contracts. Both call feature server-only
-services directly and share validation. The message-preview example is public and
+services through the feature-owned oRPC procedure and share validation (ADR 0010).
+The app composes feature routers under `/api/rpc`; typed clients stay feature-owned,
+with type-only router imports. Server code calls procedures directly without HTTP. The message-preview example is public and
 stateless; authentication and persistence remain product choices.
 
 Pages/layouts stay Server Components. Add `"use client"` at the smallest interactive
