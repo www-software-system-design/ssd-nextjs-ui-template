@@ -6,4 +6,7 @@ Business rules, mutations, and service implementations belong in features.
 Mount the shared UI provider in the locale layout; import library CSS once via globals.
 Pass matching locale/direction and translated messages. Client callbacks belong inside
 client adapters. Every page, including feedback, supplies one `main#main-content`.
+Keep app-wide metadata such as `manifest.ts` at the app root, outside locale routes.
+Maintain its install icons in `public/`; add service workers or offline behavior only
+for an explicit product requirement.
 Do not disable typed routes or move secrets into client imports.

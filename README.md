@@ -99,12 +99,26 @@ CI runs check and build. Application behavior tests are added alongside real fea
 the template does not ship unused Storybook, browser-test, or state-library packages.
 Shared component stories/tests belong to the UI library.
 
+## Progressive web app
+
+The app exposes a root-level web app manifest at `/manifest.webmanifest` using
+Next.js's `src/app/manifest.ts` convention. It uses `src/config/site.ts` for its
+name and description and declares 192×192 and 512×512 install icons in `public/`.
+Update those icons and the site configuration when adopting the template.
+
+Serve the production app over HTTPS for browser installation prompts; local HTTP
+development is generally treated as a secure context on `localhost`. The manifest
+supports installation but does not add a service worker, offline caching, or push
+notifications. Add those only when the product has explicit requirements, using the
+installed Next.js guides to choose and validate the appropriate approach.
+
 ## Runtime
 
 Keep pages/layouts server-rendered; isolate interactive adapters with `"use client"`.
 Use `server-only` for private data and credentials. Cache Components, partial
 prefetching, the Tailwind Turbopack loader, and typed routes are retained from the
-baseline; consult the installed Next.js guides before changing their behavior.
+baseline; consult the installed Next.js guides before changing their behavior,
+including the [PWA guide](https://nextjs.org/docs/app/guides/progressive-web-apps).
 System fonts avoid external font downloads.
 
 `NEXT_PUBLIC_` values are public and embedded at build time. Never put secrets in
