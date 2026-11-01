@@ -19,6 +19,9 @@ business behavior and Next.js adapters belong here. Do not recreate `components/
   Scaffolding/guidance: ADR 0003. Baseline/tooling: ADR 0004.
   API endpoints, Server Actions, and the Node LTS baseline: ADR 0005.
   Server Action naming and opt-in scaffolding: ADR 0006.
+  Zustand, UI preferences, and server/client state ownership: ADR 0007.
+  Light/dark/system theme persistence and hydration: ADR 0008.
+  Sun/moon Light/Dark control and Light default: ADR 0009.
 - Guidance lives in `src/`, its scaffolded layers, `scripts/`, and `docs/adr/`.
   Use `npm run generate:feature -- <name>` so new features inherit local guidance.
 - Preserve unrelated changes. Use strict TypeScript; keep routes thin and features

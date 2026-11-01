@@ -18,3 +18,8 @@ Return serializable expected failures, and let unexpected errors reach the bound
 After writes, invalidate only affected caches and redirect last, outside catch blocks.
 Use `--server-actions` when generating a feature to include the action module scaffold.
 See ADR 0006; these naming/scaffold rules are repository conventions, not Next.js requirements.
+
+For shared client state, follow ADR 0007 and `docs/state-management.md`. Create a
+feature-owned Zustand factory/provider only when needed; never export a global store
+instance or access it from RSCs/actions/handlers. Keep form feedback in useActionState
+and shared UI preferences in the app store, without moving domain data into it.

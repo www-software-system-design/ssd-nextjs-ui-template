@@ -1,6 +1,11 @@
 {
   "nav": {
-    "language": "भाषा"
+    "language": "भाषा",
+    "compactView": "सघन दृश्य"
+  },
+  "theme": {
+    "switchToLight": "हल्की थीम पर जाएँ",
+    "switchToDark": "गहरी थीम पर जाएँ"
   },
   "starter": {
     "title": "आपका ऐप यहाँ से शुरू होता है",

@@ -15,3 +15,7 @@ when needed, rather than importing that example into another feature.
 Follow ADR 0006 for action naming/scaffolding: module-level `"use server"`, named
 async `<verb><Entity>Action` exports, no JSX or exported state/constants in that module.
 `npm run generate:feature -- <name> --server-actions` includes its module scaffold.
+Use local React state first; feature-shared client state can use a feature-owned
+Zustand factory/provider. Do not add feature data to the application UI store.
+Keep action feedback in useActionState and authoritative data on the server.
+See ADR 0007 and `docs/state-management.md` for server/client boundaries.

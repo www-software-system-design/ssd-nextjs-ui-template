@@ -35,6 +35,8 @@ A provisional local UI gap requires an ADR naming the owner and extraction plan.
   feature-level `actions.ts` module (ADR 0006).
 - `src/components/`: application shell and framework adapters, never a second UI kit.
 - `src/lib/`: shared infrastructure with real consumers, never a business dumping ground.
+- `src/lib/stores/`: factories for app-wide public client preferences; feature stores
+  stay feature-owned. `src/components/providers/` supplies mounted store lifetimes.
 - `src/config/`: typed, public configuration. Secrets belong in server-only modules.
 - `src/contents/`: application translation catalogs with matching keys.
 - `scripts/`: TypeScript repository tooling; `docs/adr/`: decisions and migration impact.
@@ -69,6 +71,18 @@ exceptions or secrets.
 
 ## Guidance and validation
 
+Zustand supplies app-wide mutable client preferences (ADR 0007). The locale layout
+creates a provider scope; the header density control and `AppContent` select from
+the same instance. RSCs pass serializable seeds and children, never read/write the
+live store. API/action validation and data ownership remain on the server.
+See [state management](state-management.md) for scope, hydration, persistence,
+selectors, alternatives, and feature store placement.
+ADR 0008 adds theme-only persistence; ADR 0009 selects the sun/moon Light/Dark
+control with Light as default.
+`AppUiProvider` connects it to shared UI tokens; a static validated bootstrap
+apply document/scope preferences before hydration. The app owns persistence and
+document integration, while the shared library owns palettes and generic controls.
+
 Read root guidance, then only the scoped guidance and ADRs relevant to the touched
 files. `npm run generate:feature -- billing` scaffolds a feature and its guidance.
 Add `--server-actions` to include an `actions.ts` scaffold. Export named async
@@ -80,5 +94,5 @@ Accepted ADRs are historical records: supersede them with a new ADR.
 `npm run check` covers formatting, lint, architecture, types, tooling and server feature tests;
 `npm run build` validates production routes and package consumption. Add feature
 behavior tests and their CI command when business logic is introduced. Native Node
-tests validate scaffolding, server services, and actions; browser tests can be added
+tests validate scaffolding, server services, actions, and store behavior; browser tests can be added
 when a product requires them.

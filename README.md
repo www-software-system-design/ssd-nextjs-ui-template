@@ -2,6 +2,7 @@
 
 Foundation for independently built software-system.design MFEs: Next.js App Router,
 React, strict TypeScript, Tailwind, and published `@software-system.design/ui` by default.
+Zustand manages app-wide theme and display-density preferences.
 
 ## Start
 
@@ -15,6 +16,9 @@ npm run dev
 Open http://localhost:3000; the locale proxy redirects to English or Hindi according
 to the first supported language preference. No secrets or authentication setup is
 required. Copy `.env.example` to `.env.local` when adding application configuration.
+
+Change language using the **EN/HI dropdown at the bottom-right of the footer**.
+Switching preserves the current page, query parameters, URL fragment, and scroll.
 
 ## Create a microfrontend
 
@@ -83,18 +87,19 @@ runtime-computed import.
 
 ## Commands
 
-| Command                              | Purpose                                        |
-| ------------------------------------ | ---------------------------------------------- |
-| `npm run dev`                        | Development server                             |
-| `npm run generate:feature -- <name>` | Feature and component guidance                 |
-| `npm run format`                     | Format source and documentation                |
-| `npm run lint`                       | Type-aware Next.js/React lint                  |
-| `npm run check:architecture`         | Guidance, UI dependency, and import boundaries |
-| `npm run typecheck`                  | Route generation and strict TypeScript         |
-| `npm test`                           | Native Node tooling and server feature tests   |
-| `npm run check`                      | Formatting, lint, architecture, types, tests   |
-| `npm run build`                      | Production compilation and route generation    |
-| `npm start`                          | Serve production build                         |
+| Command                              | Purpose                                              |
+| ------------------------------------ | ---------------------------------------------------- |
+| `npm run dev`                        | Development server                                   |
+| `npm run generate:feature -- <name>` | Feature and component guidance                       |
+| `npm run format`                     | Format source and documentation                      |
+| `npm run lint`                       | Type-aware Next.js/React lint                        |
+| `npm run check:architecture`         | Guidance, UI dependency, and import boundaries       |
+| `npm run typecheck`                  | Route generation and strict TypeScript               |
+| `npm test`                           | Native Node tooling, server feature, and state tests |
+| `npm run test:state`                 | Store isolation and initialization tests             |
+| `npm run check`                      | Formatting, lint, architecture, types, tests         |
+| `npm run build`                      | Production compilation and route generation          |
+| `npm start`                          | Serve production build                               |
 
 CI runs check and build, including server feature tests. Application behavior tests are added alongside real features;
 the template does not ship unused Storybook, browser-test, or state-library packages.
@@ -120,12 +125,54 @@ The example page renders a form; the Server Action is the async
 Generate new features with `npm run generate:feature -- <name> --server-actions`
 to inherit the same naming and module boundaries.
 
+## Shared client state
+
+The header's **Compact view** toggle uses Zustand 5.0.16 to control application
+page spacing. The preference survives client navigation within the same locale
+layout; a reload or locale remount resets it to comfortable. It is memory-only.
+
+The header's **sun/moon button** switches between **Light** (default) and **Dark**. Theme
+changes apply to the shared UI provider and document colors. The browser remembers
+the selected theme in `localStorage` (`ssd-ui-theme`) across reloads and locales,
+and synchronizes it between open tabs. The sun switches to Light; the moon switches to Dark.
+If browser storage is unavailable, theme switching still works for the current visit.
+The pre-paint bootstrap applies saved token scopes before React hydrates; only
+their expected theme-attribute differences are suppressed.
+See [theming](docs/theming.md) for the current control, file ownership, saved-value
+migration, hydration setup, and browser verification steps.
+
+The Server Component layout passes public initial preferences to a Client Component
+provider. Each provider creates an isolated store, and client consumers use typed
+selectors. Server Components, API handlers, and Server Actions never use the live
+client store. Form submission feedback stays in `useActionState`.
+
+See [state management](docs/state-management.md) for examples, server/client boundaries,
+store placement, and when Zustand, React state, URL state, or server-data tools fit.
+
 ## Progressive web app
+
+The header uses the supplied SSD artwork at `public/ssd-logo.jpeg`. The favicon
+(`src/app/favicon.ico`), Apple touch icon (`src/app/apple-icon.png`), and PWA icons
+are derived from that same artwork. Replace these together when changing branding.
 
 The app exposes a root-level web app manifest at `/manifest.webmanifest` using
 Next.js's `src/app/manifest.ts` convention. It uses `src/config/site.ts` for its
-name and description and declares 192×192 and 512×512 install icons in `public/`.
+name and description and declares general-purpose 192×192 and 512×512 install icons
+in `public/`. Each locale layout links to this manifest, with app ID and scope `/`.
 Update those icons and the site configuration when adopting the template.
+
+Keep regular install icons marked `purpose: "any"` (or omit purpose). Maskable icons
+are optional additional entries with artwork verified for the maskable safe area;
+do not replace all regular icons with maskable-only entries.
+
+In Chrome on localhost, use the address-bar install icon or the browser menu's
+install option when offered. A manifest does not guarantee that Chrome shows a
+download icon or automatic prompt: installed apps, dismissed promotions, private
+browsing, and browser policy can affect it. For troubleshooting, open DevTools →
+Application → Manifest, check installability messages, and verify that
+`/manifest.webmanifest` and both PNG icons load successfully. Use a normal browser
+window, reload after manifest changes, and check that the app is not already installed.
+There is no custom in-page install button in this template.
 
 Serve the production app over HTTPS for browser installation prompts; local HTTP
 development is generally treated as a secure context on `localhost`. The manifest

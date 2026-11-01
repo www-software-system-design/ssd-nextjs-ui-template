@@ -1,6 +1,11 @@
 {
   "nav": {
-    "language": "Language"
+    "language": "Language",
+    "compactView": "Compact view"
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
   },
   "starter": {
     "title": "Your application starts here",

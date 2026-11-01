@@ -18,7 +18,8 @@
     "generate:feature": "node scripts/generate-feature.ts",
     "test:tooling": "node --test scripts/*.test.ts",
     "test:features": "node --conditions=react-server --test src/features/*/*.test.ts",
-    "test": "npm run test:tooling && npm run test:features",
+    "test:state": "node --test src/lib/stores/*.test.ts src/config/theme.test.ts",
+    "test": "npm run test:tooling && npm run test:features && npm run test:state",
     "check": "npm run format:check && npm run lint && npm run check:architecture && npm run typecheck && npm test"
   },
   "engines": {
@@ -29,7 +30,8 @@
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "zustand": "5.0.16"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
